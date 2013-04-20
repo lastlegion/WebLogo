@@ -1,0 +1,10 @@
+WebLogo
+=======
+A javascript based logo interpreter
+
+Type help to get a list of commands
+
+Example command:
+    fd 40
+
+
