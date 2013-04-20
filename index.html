@@ -1,0 +1,457 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html  PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'  'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+
+	<head>
+		<title>Logo Turtle Alpha</title>
+		<style>
+		body{
+			font-family: 'Lucida Sans Unicode', Monospace;
+			font-size: 15px;
+			/*font-weight: bold;*/
+
+		}
+		.line1{
+			stroke: #000;
+			width: 3px;
+			
+		}
+		#console{
+			background: #ccc;
+			padding: 5px;
+			height: 180px;
+			overflow: auto;
+			position: absolute;
+			bottom: 4px;
+			width: 96%;
+			
+		}
+		ul{
+			list-style: none;
+		}
+		textarea{
+			outline: none;
+		}	
+		#cmd2{
+			overflow: hidden;
+			height: 17px;
+			font: inherit;
+			padding: 1px;
+			margin: 0;
+			resize: none;
+			font-family: 'Lucida Sans Unicode', Monospace;
+			border: 0px dashed #ccc;
+			background:transparent;
+		}
+		#cmd2:active{
+		border: 0px;
+		}
+		#text{
+			width: 280px;
+			position: absolute;
+			right: 12px;
+			bottom: 230px;
+			font-size: 20px;
+			font-family: Georgia, 'Times New Roman', Arial;
+			color: #333;
+			opacity: 0.6;
+			
+		}
+		#text p{
+			padding: 0;
+			margin: 0;
+		}
+		.quote{
+			font-size: 50px;
+			line-height: 18px;
+			font-family: Georgia, 'Arial Black';
+		}
+		.error{
+			color: red;
+		}
+		.cmdtext{
+			color: #000;
+		}
+		
+		</style>
+		
+		
+		
+		
+		
+		
+    <script src="js/jquery-1.4.4.min.js"></script>
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<script type="text/javascript">
+		//Lt needs to be fixed!
+		//Global stuff
+		var angle = 0; //Angle wud be 0 initially;
+		var myangle =0;
+		//Current positions wrt the triangle
+			var ptx = 0;
+			var pty = 0; 
+
+		//Centroid
+		var TransX = 210;
+		var TransY = 196;
+		
+
+		//Lez do some jQuery!
+		$(document).ready(function(){
+			$('#cmd2').focus();
+			
+			$(document).click(function(){
+				$('#cmd2').focus();
+			});
+			
+	
+			
+			
+			
+		})
+		
+		
+			function onEnter(){
+				if(window.event)
+					  key = window.event.keyCode;     //IE
+				else
+					  key = e.which;     //firefox
+				 if(key == 13)
+				{
+						parse(this);
+						document.getElementById("cmd2").value = "";	
+						resetCursor(cmd2);
+						document.getElementById("cmd2").focus();						
+					  
+				}
+
+			}
+						
+
+			function resetCursor(txtElement) { 
+				if (txtElement.setSelectionRange) { 
+					txtElement.focus(); 
+					txtElement.setSelectionRange(0, 0); 
+				} else if (txtElement.createTextRange) { 
+					var range = txtElement.createTextRange();  
+					range.moveStart('character', 0); 
+					range.select(); 
+				} 
+			}	
+			
+	
+		
+			function move_turtle(cmd, move)
+			{
+				//var currx = document.getElementById("triangle").getAttribute("points").split(" ")[2] ;//Current Position(x) of the turtle
+
+				//var curry = document.getElementById("triangle").getAttribute("points").split(" ")[3] ;//Curent Position(y) of the top vertex
+				//var currx = 
+				
+				var curr1x = document.getElementById("triangle").getAttribute("points").split(" ")[0] ; 
+				var curr1y = document.getElementById("triangle").getAttribute("points").split(" ")[1] ; 
+				var curr3x = document.getElementById("triangle").getAttribute("points").split(" ")[4] ; 
+				var curr3y = document.getElementById("triangle").getAttribute("points").split(" ")[5] ; 
+				currx = currx *1;//To integer				
+				curry = curry*1;
+				curr1x = curr1x *1;//To integer				
+				curr1y = curr1y*1;
+				curr3x = curr3x *1;//To integer				
+				curr3y = curr3y*1;		
+
+
+				//Median
+				var median = 0;
+				medianx = (currx + curr1x + curr3x)/3;
+				mediany = (curry + curr1y + curr3y)/3;
+						
+			    //Create the new path
+				var path = document.createElementNS("http://www.w3.org/2000/svg", "line");
+				
+				var cos1 = 0;
+				cos1 = Math.cos(angle);//Was (angle) befo
+				sin1 = Math.sin(angle);
+
+				
+				/* Set any attributes as desired
+				shape.setAttribute("x1", 175);
+				shape.setAttribute("y1", 125);
+				shape.setAttribute("x2", 175);
+				shape.setAttribute("y2", move1);
+
+				shape.setAttribute("class", 'line1');				
+			  */
+
+
+				//Get current angle
+				var cangle = document.getElementById("triangle").getAttribute("transform").split(" ");//Will return a string array
+				var cang = cangle[1];
+
+				var currx = TransX;
+				var curry = TransY;
+
+
+
+							  
+				if(cmd == "fd")
+				{
+					
+					//Create the path
+					path.setAttribute("x1", currx); //May have to change to_int
+					path.setAttribute("y1", curry);
+					//ptx = curr
+					path.setAttribute("x2", currx + (move*sin1));
+					path.setAttribute("y2", curry - (move*cos1));
+					path.setAttribute("class", 'line1');
+					document.getElementById("svg_main").appendChild(path);
+					TransX = TransX + (move*sin1);
+					TransY = TransY + (-1*(move*cos1));
+					currx = TransX;
+					curry = TransY;
+					ptx = ptx + (move*sin1);
+					pty = pty + (-1*(move*cos1));
+					/*
+					//Move the turtle
+					//document.getElementById( "triangle" ).setAttribute("points", '150,200 175,175 200,200');	
+									
+					document.getElementById("triangle").setAttribute("points", ''+ (curr1x + move*sin1)+','+(curr1y- (move*cos1))+' '+(currx + (move*sin1))+','+(curry - (move*cos1))+' '+(curr3x + (move*sin1)) +','+(curr3y-(move*cos1))+'');
+					*/
+					//document.getElementById("triangle").setAttribute("transform",'translate('+ ptx + ','  + pty + ')');// rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ')');
+					//document.getElementById("triangle").setAttribute("transform",'translate('+ ptx + ','  + ptx + ') rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + ptx + ')');
+					 document.getElementById("triangle").setAttribute("transform", 'rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + pty + ')');
+					//delte this
+					document.getElementById("dot").setAttribute("cx", 210+ptx);
+					document.getElementById("dot").setAttribute("cy", 196+pty);
+							
+						
+				}
+				else if(cmd == "bk")
+				{
+				
+				
+					//Create the path
+					path.setAttribute("x1", currx); //May have to change to_int
+					path.setAttribute("y1", curry);
+					//ptx = curr
+					path.setAttribute("x2", currx - (move*sin1));
+					path.setAttribute("y2", curry + (move*cos1));
+					path.setAttribute("class", 'line1');
+					document.getElementById("svg_main").appendChild(path);
+					TransX = TransX - (move*sin1);
+					TransY = TransY - (-1*(move*cos1));
+					currx = TransX;
+					curry = TransY;
+					ptx = ptx - (move*sin1);
+					pty = pty - (-1*(move*cos1));
+					/*
+					//Move the turtle
+					//document.getElementById( "triangle" ).setAttribute("points", '150,200 175,175 200,200');	
+									
+					document.getElementById("triangle").setAttribute("points", ''+ (curr1x + move*sin1)+','+(curr1y- (move*cos1))+' '+(currx + (move*sin1))+','+(curry - (move*cos1))+' '+(curr3x + (move*sin1)) +','+(curr3y-(move*cos1))+'');
+					*/
+					//document.getElementById("triangle").setAttribute("transform",'translate('+ ptx + ','  + pty + ')');// rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ')');
+					//document.getElementById("triangle").setAttribute("transform",'translate('+ ptx + ','  + ptx + ') rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + ptx + ')');
+					 document.getElementById("triangle").setAttribute("transform", 'rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + pty + ')');
+					//delte this
+					document.getElementById("dot").setAttribute("cx", 210+ptx);
+					document.getElementById("dot").setAttribute("cy", 196+pty);
+					//Create the path
+					/*
+					path.setAttribute("x1",currx);
+					path.setAttribute("y1", curry);
+					path.setAttribute("x2", currx
+					*/ 
+				}
+				else if(cmd == "lt")
+				{
+					 myangle = 360 - (move*1 ) + (myangle*1);
+					 angle =6.28318531 -(0.0174444444*move) + (1*angle) ; //2pi - radian
+
+					 //Rotate the turtle by the angle
+					 //document.getElementById("triangle").setAttribute("transform", 'rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ')');
+					 document.getElementById("triangle").setAttribute("transform", 'rotate(' + (myangle) + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + pty + ')');
+
+					 
+				}
+				else if(cmd == "rt")
+				{
+					//Get current rotation and then add/subtract to it
+					//move is the angle 
+					myangle = move + myangle;
+					 angle = 0.0174444444*move + angle;
+					 document.getElementById("triangle").setAttribute("transform", 'rotate(' + myangle + ',' + (210+ptx) + ',' + (196+pty) + ') translate('+ ptx + ','  + pty + ')');
+
+
+
+
+						document.getElementById("dot").setAttribute("cx", 210+ptx);
+						document.getElementById("dot").setAttribute("cy", 196+pty);
+								
+
+						/*Hack *///Lets tranlate it to ptx and pty
+					 //document.getElementById("triangle").setAttribute("transform",'translate('+ ptx + ','  + pty + ')');
+				}
+				else
+				{
+					//Do stuff
+					path.setAttribute("x1", currx); //May have to change to_int
+					path.setAttribute("y1", curry);
+					path.setAttribute("x2", currx);
+					path.setAttribute("y2", move);
+					path.setAttribute("class", 'line1');		
+					return move;			
+				}
+		
+			}
+
+			function ltrim(str, chars) {
+				chars = chars || "\\s";
+				return str.replace(new RegExp("^[" + chars + "]+", "g"), "");
+			}
+			function parse(form1)
+			{
+				//fd 40
+				var cmd = ltrim(document.getElementById("cmd2").value, "\n");
+				var temp = cmd.split(" ");
+				var move = ' ';
+				cmd = temp[0].toLowerCase();
+				move = temp[1] * 1;
+				//Display the current command
+
+				
+				if(cmd == "help")
+				{
+					var txt = document.createTextNode(' '+ cmd + "  "  );
+					$("#console li:last").append("<li class='cmdtext'>Help: FD, BK, RT, LT are supported. Syntax FD x(eg fd 100 will move the turtle 100 units in forward direction)</li>");
+					
+					
+
+				}
+				else if(cmd == "fd" || cmd == "rt" || cmd == "lt" || cmd == "bk")
+				{
+					var txt =' '+ cmd + "  " + move + ' ' ;
+					//document.getElementById('console').appendChild(txt); 
+					//document.getElementById('console').appendChild(txt); 
+					$("#console li:last").append("<li class='cmdtext'>"+txt+"</li>");
+					move_turtle(cmd, move);
+				}
+				else
+				{
+					var txt = ' '+ cmd + "  ";
+					$("#console li:last").append("<li class='error'>"+txt);
+					var txt = ' Unkown Command! ';
+					$("#console li:last").append(" "+txt+"</li>");
+				}
+
+				
+
+				
+			}
+			
+			
+			function logoit(form1)//(form)
+			{
+			//if ( window.svgDocument == null )
+			    //svgDocument = evt.target.ownerDocument;
+ 			 
+			 //If backword			 
+			 var move = document.getElementById("move");
+			 move = move.value
+			/*curr = document.getElementById("line").getAttributeNS("y2");
+			 move1 = move+curr;*/
+			 var curr = document.getElementById("triangle").getAttribute("points").split(" ")[1];
+			 move1 = move + 125;
+			 //var move = cmd;
+			 //var line = ;//get the path
+			 //var tri = document.getElementById( "triangle" );//This is our turle
+			 
+			 
+			//Change the y coordi of all of em to the specified
+			    // "circle" may be any tag name
+				var shape = document.createElementNS("http://www.w3.org/2000/svg", "line");
+				// Set any attributes as desired
+				shape.setAttribute("x1", 175);
+				shape.setAttribute("y1", 125);
+				shape.setAttribute("x2", 175);
+				shape.setAttribute("y2", move1);
+
+				shape.setAttribute("class", 'line1');
+				//shape.setAttribute("style", stroke:rgb(99,99,99););
+				// Add to a parent node; document.documentElement should be the root svg element.
+				// Acquiring a parent element with document.getElementById() would be safest.
+				document.getElementById("svg_main").appendChild(shape);
+				//alert("Hello World!" + move) ;
+				
+				
+				
+				//Move the turtle to current position
+				document.getElementById( "triangle" ).setAttribute("points", '150,200 175,175 200,200');
+				
+			}
+
+		</script>
+		
+	</head>
+	
+	<body>
+	
+	<svg id="svg_main" width="900px" height="430px" version="1.1"
+	xmlns="http://www.w3.org/2000/svg">
+	
+	<polygon id ="triangle" points="190,200 210,180 230,200"
+	style="fill: #3399ff;
+	stroke:#000000;stroke-width:1" transform="rotate( 0 , 0 , 0 )">
+	</polygon>
+	
+	<line id="line" x1="175" y1="125" x2="175" y2="125"
+	style="stroke:rgb(99,99,99);stroke-width:3"/>
+	
+	
+	
+	<!-- Delete this -->
+	
+	<circle cx=210 cy="196" r="2" stroke="black"
+stroke-width="2" fill="red" id="dot"/>
+	
+	<!--  -->
+	
+	</svg>
+	<ul id="console">
+	<p>Howdy! Welcome to Ganesh's Logo Turtle! Type Help for list of commands supported</p>
+		<li></li>
+		<form action="#" name="myform" >
+
+		<!--
+		<input type="text" name="cmd" id="cmd" size="20"  onkeypress="onEnter();"/>
+		-->
+
+		
+		
+
+		
+		
+			<textarea name="cmd2" id="cmd2" onkeypress="onEnter();"/>
+		
+			</textarea>
+			<!--<input type="button" value="Go!" onclick="parse(myform)"/>
+			-->
+		</form>	
+	</ul>
+
+	<div id="text">
+		<p><span class="quote">&ldquo;</span>Logo turtle is so smart<br />He's the master of good art<span class="quote">&rdquo;</span></p>
+	</div>
+	
+	</body>
+</html>
